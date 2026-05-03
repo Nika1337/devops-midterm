@@ -32,12 +32,14 @@ scripts/
 Install dependencies:
 
 ```bash
+cd app
 npm install
 ```
 
 Start the application:
 
 ```bash
+cd app
 npm start
 ```
 
@@ -69,6 +71,7 @@ curl -X POST http://localhost:3000/tasks \
 Run automated tests:
 
 ```bash
+cd app
 npm test
 ```
 
@@ -77,6 +80,7 @@ npm test
 Run ESLint:
 
 ```bash
+cd app
 npm run lint
 ```
 

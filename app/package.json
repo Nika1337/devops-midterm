@@ -2,9 +2,9 @@
   "name": "devops-midterm-express-app",
   "version": "1.0.0",
   "description": "Beginner-friendly DevOps assignment app using Node.js and Express.",
-  "main": "app/server.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node app/server.js",
+    "start": "node server.js",
     "test": "jest",
     "lint": "eslint ."
   },
