@@ -258,25 +258,28 @@ GitHub Actions runs linting and tests on pushes and pull requests to `main` and 
 
 ```mermaid
 flowchart TD
-    A[Developer works on dev branch] --> B[Push or pull request]
-    B --> C[GitHub Actions CI]
+    A[Developer works on dev branch] --> B[Push changes or open pull request]
+    B --> C[GitHub Actions CI starts]
     C --> D[Install dependencies inside app/]
     D --> E[Run ESLint]
     E --> F[Run Jest tests]
     F --> G{CI passed?}
     G -->|No| H[Fix issues and push again]
-    G -->|Yes| I[Merge dev into main]
-    I --> J[Run setup.sh]
-    J --> K[Run deploy-blue-green.sh]
-    K --> L[Deploy to inactive environment]
-    L --> M[Run target /health check]
-    M --> N{Healthy?}
-    N -->|No| O[Keep current active environment]
-    N -->|Yes| P[Update active-env.txt]
-    P --> Q[Proxy routes localhost:3000 to active environment]
-    Q --> R[Run health-check.sh monitoring]
-    O --> S[Run rollback.sh if needed]
-    R --> S
+    G -->|Yes| I[Pull request is ready for main]
+    I --> J[Merge pull request into main]
+
+    J --> K[Manual local CD demonstration]
+    K --> L[Run setup.sh]
+    L --> M[Run deploy-blue-green.sh]
+    M --> N[Deploy to inactive blue or green environment]
+    N --> O[Run target /health check]
+    O --> P{Healthy?}
+    P -->|No| Q[Keep current active environment]
+    P -->|Yes| R[Update active-env.txt]
+    R --> S[Proxy routes localhost:3000 to active environment]
+    S --> T[Run health-check.sh monitoring]
+    Q --> U[Run rollback.sh if needed]
+    T --> U
 ```
 
 ## Screenshots
