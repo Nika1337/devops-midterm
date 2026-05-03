@@ -1,0 +1,142 @@
+# DevOps Midterm Express App
+
+A small beginner-friendly Node.js and Express web application for a DevOps assignment. The app stores tasks in memory and does not use a database.
+
+## Tech Stack
+
+- Node.js
+- Express
+- CommonJS JavaScript
+- Jest
+- Supertest
+- ESLint
+- GitHub Actions
+
+## Project Structure
+
+```text
+app/
+  app.js
+  app.test.js
+  server.js
+deployments/
+logs/
+screenshots/
+scripts/
+.github/workflows/
+  ci.yml
+```
+
+## Setup
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the application:
+
+```bash
+npm start
+```
+
+Open the app at:
+
+```text
+http://localhost:3000
+```
+
+## Available Routes
+
+| Method | Route | Description |
+| --- | --- | --- |
+| GET | `/` | Shows a simple task form |
+| POST | `/tasks` | Creates a task in memory |
+| GET | `/tasks/:id` | Gets one task by id |
+| GET | `/health` | Returns application health status |
+
+Example JSON request:
+
+```bash
+curl -X POST http://localhost:3000/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Prepare DevOps assignment"}'
+```
+
+## Tests
+
+Run automated tests:
+
+```bash
+npm test
+```
+
+## Linting
+
+Run ESLint:
+
+```bash
+npm run lint
+```
+
+## CI Workflow
+
+GitHub Actions runs linting and tests on every push and pull request.
+
+```text
+Push or Pull Request
+        |
+        v
+GitHub Actions CI
+        |
+        v
+Install dependencies
+        |
+        v
+Run ESLint
+        |
+        v
+Run Jest tests
+```
+
+## Deployment
+
+Local blue-green deployment scripts will be added in the next assignment step.
+
+Expected folder:
+
+```text
+deployments/
+```
+
+## Rollback
+
+Rollback automation will be added after the local blue-green deployment simulation is implemented.
+
+Expected folder:
+
+```text
+scripts/
+```
+
+## Monitoring
+
+A health check monitoring script will be added later. It will call `/health` and write results to the `logs/` folder.
+
+Expected folder:
+
+```text
+logs/
+```
+
+## Screenshots
+
+Add screenshots here when the app and deployment scripts are complete:
+
+```text
+screenshots/
+  home-page.png
+  health-check.png
+  ci-workflow.png
+```
