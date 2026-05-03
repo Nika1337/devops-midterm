@@ -142,12 +142,21 @@ deployments/
 
 ## Rollback
 
-Rollback automation will be added after the local blue-green deployment simulation is implemented.
+Rollback switches traffic back to the other local environment if it is still running and healthy:
 
-Expected folder:
+```bash
+bash scripts/rollback.sh
+```
+
+The rollback script reads `deployments/active-env.txt`, checks the other environment's `app.pid`, verifies its `/health` endpoint, and updates `active-env.txt` only when the rollback target is healthy.
+
+Example:
 
 ```text
-scripts/
+active-env.txt = green
+rollback target = blue
+blue health check passes
+active-env.txt = blue
 ```
 
 ## Monitoring
