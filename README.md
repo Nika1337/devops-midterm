@@ -76,7 +76,7 @@ Recommended workflow:
 5. GitHub Actions runs linting and tests.
 6. Merge to `main` only after CI passes.
 
-The CI workflow is configured to run on pushes and pull requests targeting `main` and `dev`.
+The CI workflow runs automatically on every push and pull request.
 
 ## Step-by-Step Setup
 
@@ -138,7 +138,7 @@ cd app
 npm run lint
 ```
 
-## How to Run Setup Automation
+## Infrastructure as Code & Automation
 
 From the repository root:
 
@@ -146,11 +146,11 @@ From the repository root:
 bash scripts/setup.sh
 ```
 
-This prepares the local folder structure and installs dependencies for the app.
+This script is the project's automation/IaC step. It prepares the local folder structure, creates the active environment configuration file, and installs dependencies for the app with one command.
 
-## Blue-Green Deployment
+## Continuous Deployment: Local Production
 
-For the blue-green simulation, browser traffic goes through a local proxy:
+The project deploys to a local "Production" environment using a blue-green deployment simulation. Browser traffic goes through a local proxy:
 
 ```text
 http://localhost:3000
@@ -258,15 +258,25 @@ GitHub Actions runs linting and tests on pushes and pull requests to `main` and 
 
 ```mermaid
 flowchart TD
-    A[Developer pushes code or opens pull request] --> B[GitHub Actions CI starts]
-    B --> C[Checkout repository]
-    C --> D[Set up Node.js]
-    D --> E[Install dependencies inside app/]
-    E --> F[Run npm run lint]
-    F --> G[Run npm test]
-    G --> H{Checks passed?}
-    H -->|Yes| I[Branch is ready to merge]
-    H -->|No| J[Fix issues and push again]
+    A[Developer works on dev branch] --> B[Push or pull request]
+    B --> C[GitHub Actions CI]
+    C --> D[Install dependencies inside app/]
+    D --> E[Run ESLint]
+    E --> F[Run Jest tests]
+    F --> G{CI passed?}
+    G -->|No| H[Fix issues and push again]
+    G -->|Yes| I[Merge dev into main]
+    I --> J[Run setup.sh]
+    J --> K[Run deploy-blue-green.sh]
+    K --> L[Deploy to inactive environment]
+    L --> M[Run target /health check]
+    M --> N{Healthy?}
+    N -->|No| O[Keep current active environment]
+    N -->|Yes| P[Update active-env.txt]
+    P --> Q[Proxy routes localhost:3000 to active environment]
+    Q --> R[Run health-check.sh monitoring]
+    O --> S[Run rollback.sh if needed]
+    R --> S
 ```
 
 ## Screenshots
@@ -291,6 +301,10 @@ Blue-green deployment:
 
 ![Blue Green Deployment](screenshots/blue-green-deployment.png)
 
+Proxy routing:
+
+![Proxy Routing](screenshots/proxy-routing.png)
+
 Rollback:
 
 ![Rollback](screenshots/rollback.png)
@@ -299,6 +313,10 @@ Monitoring:
 
 ![Monitoring](screenshots/monitoring.png)
 
+Health log:
+
+![Health Log](screenshots/health-log.png)
+
 ## Final Repository Link
 
-Repository URL: `<final-repository-link>`
+Repository URL: <https://github.com/Nika1337/devops-midterm>
