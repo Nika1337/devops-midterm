@@ -1,6 +1,10 @@
 # DevOps Midterm Express App
 
-A small beginner-friendly Node.js and Express web application for a DevOps assignment. The app stores tasks in memory and does not use a database.
+## Project Overview
+
+This repository contains a small beginner-friendly DevOps assignment project built with Node.js and Express. The application is a simple in-memory task tracker with a web form, dynamic task detail route, health endpoint, automated tests, linting, GitHub Actions CI, setup automation, local blue-green deployment simulation, proxy-based traffic routing, rollback support, and health check monitoring.
+
+The app does not use a database. Tasks are stored in memory and reset whenever the application restarts.
 
 ## Tech Stack
 
@@ -10,7 +14,24 @@ A small beginner-friendly Node.js and Express web application for a DevOps assig
 - Jest
 - Supertest
 - ESLint
+- Bash
 - GitHub Actions
+
+## Features
+
+- Small Express web application
+- Home page with task input form
+- In-memory task storage
+- Dynamic route for viewing one task
+- Health check endpoint
+- Automated unit tests with Jest and Supertest
+- ESLint linting
+- GitHub Actions CI for tests and linting
+- Bash setup automation
+- Local blue-green deployment simulation
+- Local proxy that routes one browser URL to the active environment
+- Rollback script
+- Health check monitoring script with log output
 
 ## Project Structure
 
@@ -18,137 +39,186 @@ A small beginner-friendly Node.js and Express web application for a DevOps assig
 app/
   app.js
   app.test.js
+  eslint.config.js
+  package.json
+  package-lock.json
+  proxy.js
+  proxy.test.js
   server.js
 deployments/
+  active-env.txt
+  blue/
+  green/
 logs/
 screenshots/
 scripts/
+  deploy-blue-green.sh
+  health-check.sh
+  rollback.sh
+  setup.sh
 .github/workflows/
   ci.yml
 ```
 
-## Setup
+## Branching Strategy
 
-Prepare the local environment:
+This project uses two main branches:
+
+- `main`: stable branch for final working code
+- `dev`: development branch for new changes before merging into `main`
+
+Recommended workflow:
+
+1. Create or switch to the `dev` branch.
+2. Make changes and test locally.
+3. Push changes to GitHub.
+4. Open a pull request from `dev` to `main`.
+5. GitHub Actions runs linting and tests.
+6. Merge to `main` only after CI passes.
+
+The CI workflow is configured to run on pushes and pull requests targeting `main` and `dev`.
+
+## Step-by-Step Setup
+
+Clone the repository:
+
+```bash
+git clone <repository-url>
+cd <repository-folder>
+```
+
+Run the setup automation script:
 
 ```bash
 bash scripts/setup.sh
 ```
 
-This creates the required local folders, sets the default active environment to `blue`, and installs app dependencies.
+The setup script:
 
-You can also install dependencies manually:
+- Creates `logs/` if missing
+- Creates `deployments/blue/` and `deployments/green/` if missing
+- Creates `deployments/active-env.txt` with `blue` if missing
+- Installs app dependencies inside `app/`
 
-```bash
-cd app
-npm install
-```
+## How to Run the App
 
-Start the application:
+Start the application locally:
 
 ```bash
 cd app
 npm start
 ```
 
-Open the app at:
+Open the app in a browser:
 
 ```text
 http://localhost:3000
 ```
 
-## Available Routes
+Available routes:
 
 | Method | Route | Description |
 | --- | --- | --- |
-| GET | `/` | Shows a simple task form |
-| POST | `/tasks` | Creates a task in memory |
-| GET | `/tasks/:id` | Gets one task by id |
+| GET | `/` | Shows the task form and current tasks |
+| POST | `/tasks` | Creates a new in-memory task |
+| GET | `/tasks/:id` | Shows one task by id |
 | GET | `/health` | Returns application health status |
 
-Example JSON request:
-
-```bash
-curl -X POST http://localhost:3000/tasks \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Prepare DevOps assignment"}'
-```
-
-## Tests
-
-Run automated tests:
+## How to Run Tests
 
 ```bash
 cd app
 npm test
 ```
 
-## Linting
-
-Run ESLint:
+## How to Run Linting
 
 ```bash
 cd app
 npm run lint
 ```
 
-## CI Workflow
+## How to Run Setup Automation
 
-GitHub Actions runs linting and tests on every push and pull request.
+From the repository root:
 
-```text
-Push or Pull Request
-        |
-        v
-GitHub Actions CI
-        |
-        v
-Install dependencies
-        |
-        v
-Run ESLint
-        |
-        v
-Run Jest tests
+```bash
+bash scripts/setup.sh
 ```
 
-## Deployment
+This prepares the local folder structure and installs dependencies for the app.
 
-Run a local blue-green deployment simulation:
+## Blue-Green Deployment
+
+For the blue-green simulation, browser traffic goes through a local proxy:
+
+```text
+http://localhost:3000
+```
+
+The proxy reads `deployments/active-env.txt` on each request and forwards traffic to the active environment.
+
+| Active environment | Browser URL | Actual app port |
+| --- | --- | --- |
+| blue | `http://localhost:3000` | `3001` |
+| green | `http://localhost:3000` | `3002` |
+
+Start the proxy in a separate terminal:
+
+```bash
+cd app
+npm run proxy
+```
+
+Run the local blue-green deployment simulation from the repository root:
 
 ```bash
 bash scripts/deploy-blue-green.sh
 ```
 
-The script reads `deployments/active-env.txt` and deploys to the inactive environment:
+The deployment script:
+
+- Reads the current active environment from `deployments/active-env.txt`
+- Deploys to the inactive environment
+- Copies app files into the target deployment folder
+- Installs production dependencies in the target folder
+- Starts the target environment
+- Runs a health check against `/health`
+- Updates `active-env.txt` only if the health check succeeds
+- Lets the proxy route browser traffic to the active environment
+
+Environment ports:
 
 | Environment | Port |
 | --- | --- |
 | blue | `3001` |
 | green | `3002` |
 
-It copies the app into the target deployment folder, installs production dependencies, starts the target environment, checks `/health`, and updates `active-env.txt` only after the health check passes.
-
-Deployment folders:
+Example:
 
 ```text
-deployments/
-  active-env.txt
-  blue/
-    app.pid
-  green/
-    app.pid
+active-env.txt = blue
+deployment target = green
+green starts on port 3002
+health check passes
+active-env.txt = green
 ```
 
 ## Rollback
 
-Rollback switches traffic back to the other local environment if it is still running and healthy:
+Run rollback from the repository root:
 
 ```bash
 bash scripts/rollback.sh
 ```
 
-The rollback script reads `deployments/active-env.txt`, checks the other environment's `app.pid`, verifies its `/health` endpoint, and updates `active-env.txt` only when the rollback target is healthy.
+The rollback script:
+
+- Reads the current active environment
+- Selects the other environment as the rollback target
+- Verifies the rollback target has an `app.pid` file
+- Checks the rollback target health endpoint
+- Updates `active-env.txt` only if the rollback target is healthy
 
 Example:
 
@@ -161,30 +231,74 @@ active-env.txt = blue
 
 ## Monitoring
 
-Run health check monitoring:
+Run health check monitoring from the repository root:
 
 ```bash
 bash scripts/health-check.sh
 ```
 
-The script reads the active environment from `deployments/active-env.txt`, calls the matching `/health` endpoint every 10 seconds, and writes results to:
+The monitoring script:
+
+- Reads the active environment from `deployments/active-env.txt`
+- Uses port `3001` for blue and `3002` for green
+- Calls `/health` every 10 seconds
+- Logs timestamp, environment, HTTP status, and result
+- Writes logs to `logs/health.log`
+- Stops safely with `Ctrl+C`
+
+Example log format:
 
 ```text
-logs/health.log
+2026-05-03 19:36:22 | env=blue | status=200 | result=success
 ```
 
-Log entries include timestamp, environment, HTTP status, and result.
+## CI/CD Workflow
 
-Stop monitoring safely with `Ctrl+C`.
+GitHub Actions runs linting and tests on pushes and pull requests to `main` and `dev`.
+
+```mermaid
+flowchart TD
+    A[Developer pushes code or opens pull request] --> B[GitHub Actions CI starts]
+    B --> C[Checkout repository]
+    C --> D[Set up Node.js]
+    D --> E[Install dependencies inside app/]
+    E --> F[Run npm run lint]
+    F --> G[Run npm test]
+    G --> H{Checks passed?}
+    H -->|Yes| I[Branch is ready to merge]
+    H -->|No| J[Fix issues and push again]
+```
 
 ## Screenshots
 
-Setup script success:
+Home page:
 
-![Setup script success](screenshots/setup-success.png)
+![Home Page](screenshots/home-page.png)
 
-GitHub Actions run:
+Task details:
 
-![GitHub Actions run](screenshots/github_actions_run.png)
+![Task Details](screenshots/task-details.png)
 
-More screenshots can be added later for the home page, health check, deployment, rollback, and monitoring steps.
+Setup automation success:
+
+![Setup Success](screenshots/setup-success.png)
+
+CI success:
+
+![CI Success](screenshots/ci-success.png)
+
+Blue-green deployment:
+
+![Blue Green Deployment](screenshots/blue-green-deployment.png)
+
+Rollback:
+
+![Rollback](screenshots/rollback.png)
+
+Monitoring:
+
+![Monitoring](screenshots/monitoring.png)
+
+## Final Repository Link
+
+Repository URL: `<final-repository-link>`

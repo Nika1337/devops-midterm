@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "proxy": "node proxy.js",
     "test": "jest",
     "lint": "eslint ."
   },
