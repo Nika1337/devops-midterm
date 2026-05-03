@@ -6,3 +6,5 @@ deployments/blue/*
 deployments/green/*
 !deployments/blue/.gitkeep
 !deployments/green/.gitkeep
+logs/*
+!logs/.gitkeep

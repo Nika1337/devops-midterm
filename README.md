@@ -161,13 +161,21 @@ active-env.txt = blue
 
 ## Monitoring
 
-A health check monitoring script will be added later. It will call `/health` and write results to the `logs/` folder.
+Run health check monitoring:
 
-Expected folder:
+```bash
+bash scripts/health-check.sh
+```
+
+The script reads the active environment from `deployments/active-env.txt`, calls the matching `/health` endpoint every 10 seconds, and writes results to:
 
 ```text
-logs/
+logs/health.log
 ```
+
+Log entries include timestamp, environment, HTTP status, and result.
+
+Stop monitoring safely with `Ctrl+C`.
 
 ## Screenshots
 
