@@ -114,12 +114,30 @@ Run Jest tests
 
 ## Deployment
 
-Local blue-green deployment scripts will be added in the next assignment step.
+Run a local blue-green deployment simulation:
 
-Expected folder:
+```bash
+bash scripts/deploy-blue-green.sh
+```
+
+The script reads `deployments/active-env.txt` and deploys to the inactive environment:
+
+| Environment | Port |
+| --- | --- |
+| blue | `3001` |
+| green | `3002` |
+
+It copies the app into the target deployment folder, installs production dependencies, starts the target environment, checks `/health`, and updates `active-env.txt` only after the health check passes.
+
+Deployment folders:
 
 ```text
 deployments/
+  active-env.txt
+  blue/
+    app.pid
+  green/
+    app.pid
 ```
 
 ## Rollback
