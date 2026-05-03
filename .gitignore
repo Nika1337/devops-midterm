@@ -1,0 +1,10 @@
+node_modules/
+coverage/
+.env
+npm-debug.log*
+deployments/blue/*
+deployments/green/*
+!deployments/blue/.gitkeep
+!deployments/green/.gitkeep
+logs/*
+!logs/.gitkeep
