@@ -73,7 +73,7 @@ echo "Installing production dependencies in deployments/$TARGET_ENV..."
 echo "Starting $TARGET_ENV environment..."
 (
   cd "$TARGET_DIR"
-  PORT="$TARGET_PORT" nohup npm start > app.log 2>&1 &
+  PORT="$TARGET_PORT" nohup node server.js > app.log 2>&1 &
   echo "$!" > "$PID_FILE"
 )
 

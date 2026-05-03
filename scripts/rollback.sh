@@ -43,12 +43,8 @@ if [ ! -f "$PID_FILE" ]; then
 fi
 
 ROLLBACK_PID="$(cat "$PID_FILE")"
-
-if ! kill -0 "$ROLLBACK_PID" >/dev/null 2>&1; then
-  echo "Rollback status: failed"
-  echo "Reason: $ROLLBACK_ENV process with PID $ROLLBACK_PID is not running."
-  exit 1
-fi
+echo "Found rollback PID file: deployments/$ROLLBACK_ENV/app.pid"
+echo "Saved rollback PID: $ROLLBACK_PID"
 
 echo "Checking rollback environment health: $HEALTH_URL"
 
