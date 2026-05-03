@@ -29,7 +29,15 @@ scripts/
 
 ## Setup
 
-Install dependencies:
+Prepare the local environment:
+
+```bash
+bash scripts/setup.sh
+```
+
+This creates the required local folders, sets the default active environment to `blue`, and installs app dependencies.
+
+You can also install dependencies manually:
 
 ```bash
 cd app
@@ -136,11 +144,12 @@ logs/
 
 ## Screenshots
 
-Add screenshots here when the app and deployment scripts are complete:
+Setup script success:
 
-```text
-screenshots/
-  home-page.png
-  health-check.png
-  ci-workflow.png
-```
+![Setup script success](screenshots/setup-success.png)
+
+GitHub Actions run:
+
+![GitHub Actions run](screenshots/github_actions_run.png)
+
+More screenshots can be added later for the home page, health check, deployment, rollback, and monitoring steps.
